@@ -1,8 +1,10 @@
 import { Link, useParams } from "react-router-dom";
 import { products } from "../data/product";
+import { useCart } from "../providers/CartProvider";
 
 function ProductDetailPage() {
   const { id } = useParams();
+  const { addToCart } = useCart();
 
   const product = products.find((item) => item.id === id);
 
@@ -43,7 +45,17 @@ function ProductDetailPage() {
         </div>
 
         <div className="mt-8 flex gap-4">
-          <button className="rounded-lg bg-white px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-slate-200">
+          <button
+            onClick={() =>
+              addToCart({
+                id: product.id,
+                title: product.title,
+                price: product.price,
+                category: product.category,
+              })
+            }
+            className="rounded-lg bg-white px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-slate-200"
+          >
             Add to Cart
           </button>
 
