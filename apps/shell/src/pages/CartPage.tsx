@@ -1,6 +1,8 @@
 import { useCart } from "../providers/CartProvider";
+import { useNavigate } from "react-router-dom";
 
 function CartPage() {
+  const navigate = useNavigate();
   const { items, totalPrice, increaseQty, decreaseQty, removeItem } = useCart();
 
   return (
@@ -71,7 +73,10 @@ function CartPage() {
               <span className="font-semibold text-white">${totalPrice}</span>
             </div>
 
-            <button className="mt-6 w-full rounded-lg bg-white px-4 py-3 text-sm font-medium text-slate-950 transition hover:bg-slate-200">
+            <button
+              onClick={() => navigate("/checkout")}
+              className="mt-6 w-full rounded-lg bg-white px-4 py-3 text-sm font-medium text-slate-950 transition hover:bg-slate-200"
+            >
               Proceed to Checkout
             </button>
           </div>

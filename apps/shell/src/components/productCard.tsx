@@ -5,6 +5,7 @@ type Product = {
   title: string;
   price: number;
   category: string;
+  description?: string;
 };
 
 function ProductCard({ id, title, price, category }: Product) {
