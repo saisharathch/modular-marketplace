@@ -1,10 +1,11 @@
 import { Link, useParams } from "react-router-dom";
-import { products } from "../data/product";
 import { useCart } from "../providers/CartProvider";
+import { useProducts } from "../providers/ProductsProvider";
 
 function ProductDetailPage() {
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { products } = useProducts();
 
   const product = products.find((item) => item.id === id);
 

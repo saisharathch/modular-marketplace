@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
-import ProductCard from "../components/productCard";
-import { products } from "../data/product";
+import ProductCard from "../components/ProductCard";
+import { useProducts } from "../providers/ProductsProvider";
 
 const categories = ["All", "UI Kit", "Template", "Tool"];
 
 function CatalogPage() {
+  const { products } = useProducts();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 

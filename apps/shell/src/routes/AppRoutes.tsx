@@ -6,6 +6,9 @@ import ProductDetailPage from "../pages/ProductDetailPage";
 import CartPage from "../pages/CartPage";
 import CheckoutPage from "../pages/CheckoutPage";
 import SuccessPage from "../pages/SuccessPage";
+import AdminPage from "../pages/AdminPage";
+import AddProductPage from "../pages/AddProductPage";
+import EditProductPage from "../pages/EditProductPage";
 
 function NotFoundPage() {
   return (
@@ -35,8 +38,10 @@ export const router = createBrowserRouter([
       { path: "cart", element: <CartPage /> },
       { path: "checkout", element: <CheckoutPage /> },
       { path: "success", element: <SuccessPage /> },
+      { path: "admin", element: <AdminPage /> },
+      { path: "admin/products/new", element: <AddProductPage /> },
+      { path: "admin/products/:id/edit", element: <EditProductPage /> },
       { path: "*", element: <NotFoundPage /> },
-      {}
     ],
   },
 ]);
