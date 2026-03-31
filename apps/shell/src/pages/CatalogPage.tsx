@@ -20,7 +20,7 @@ function CatalogPage() {
 
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, selectedCategory]);
+  }, [products, searchTerm, selectedCategory]);
 
   return (
     <div>

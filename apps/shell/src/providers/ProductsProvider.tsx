@@ -13,6 +13,7 @@ type ProductsContextValue = {
   products: Product[];
   addProduct: (product: CreateProductInput) => void;
   updateProduct: (id: string, product: CreateProductInput) => void;
+  deleteProduct: (id: string) => void;
 };
 
 const ProductsContext = createContext<ProductsContextValue | undefined>(
@@ -41,8 +42,16 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     setProducts((currentProducts) => [newProduct, ...currentProducts]);
   };
 
+  const deleteProduct = (id: string) => {
+    setProducts((currentProducts) =>
+      currentProducts.filter((product) => product.id !== id),
+    );
+  };
+
   return (
-    <ProductsContext.Provider value={{ products, addProduct, updateProduct }}>
+    <ProductsContext.Provider
+      value={{ products, addProduct, updateProduct, deleteProduct }}
+    >
       {children}
     </ProductsContext.Provider>
   );

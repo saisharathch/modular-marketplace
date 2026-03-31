@@ -2,12 +2,15 @@ import { Link } from "react-router-dom";
 import { useProducts } from "../providers/ProductsProvider";
 
 function AdminPage() {
-  const { products } = useProducts();
+  const { products, deleteProduct } = useProducts();
   const totalProducts = products.length;
   const totalCategories = new Set(products.map((product) => product.category))
     .size;
   const averagePrice =
-    products.reduce((sum, product) => sum + product.price, 0) / products.length;
+    products.length > 0
+      ? products.reduce((sum, product) => sum + product.price, 0) /
+        products.length
+      : 0;
 
   return (
     <div className="space-y-8">
@@ -48,11 +51,17 @@ function AdminPage() {
 
           <Link
             to="/admin/products/new"
-            className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-slate-200"
+            className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-slate-950 hover:bg-slate-200 transition"
           >
             Add Product
           </Link>
         </div>
+
+        {products.length === 0 && (
+          <div className="mt-6 text-slate-400">
+            No products available. Add a new product.
+          </div>
+        )}
 
         <div className="mt-6 overflow-x-auto">
           <table className="min-w-full border-separate border-spacing-y-3">
@@ -82,12 +91,28 @@ function AdminPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <Link
-                      to={`/admin/products/${product.id}/edit`}
-                      className="text-blue-400 hover:text-blue-300 text-sm"
-                    >
-                      Edit
-                    </Link>
+                    <div className="flex gap-3">
+                      <Link
+                        to={`/admin/products/${product.id}/edit`}
+                        className="text-sm text-blue-400 hover:text-blue-300"
+                      >
+                        Edit
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const confirmed =
+                            window.confirm("Delete this product?");
+                          if (confirmed) {
+                            deleteProduct(product.id);
+                          }
+                        }}
+                        className="text-sm text-red-400 hover:text-red-300"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
