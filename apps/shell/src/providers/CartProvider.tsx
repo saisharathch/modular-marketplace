@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import type { CartItem } from "../types/cart";
 
 type AddToCartInput = {
@@ -14,19 +20,31 @@ type CartContextValue = {
   increaseQty: (id: string) => void;
   decreaseQty: (id: string) => void;
   removeItem: (id: string) => void;
+  clearCart: () => void;
   totalItems: number;
   totalPrice: number;
-  clearCart: () => void;
 };
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
+const CART_STORAGE_KEY = "modular-marketplace-cart";
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-  
-  const clearCart = () => {
-  setItems([]);
-};
+  const [items, setItems] = useState<CartItem[]>(() => {
+    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+
+    if (!storedCart) return [];
+
+    try {
+      return JSON.parse(storedCart);
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  }, [items]);
 
   const addToCart = (product: AddToCartInput) => {
     setItems((currentItems) => {
@@ -66,6 +84,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((currentItems) => currentItems.filter((item) => item.id !== id));
   };
 
+  const clearCart = () => {
+    setItems([]);
+  };
+
   const totalItems = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity, 0),
     [items],
@@ -82,9 +104,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     increaseQty,
     decreaseQty,
     removeItem,
+    clearCart,
     totalItems,
     totalPrice,
-    clearCart,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

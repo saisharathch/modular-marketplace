@@ -1,13 +1,23 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { useProducts } from "../providers/ProductsProvider";
+import EmptyState from "../components/EmptyState";
+import SectionHeader from "../components/SectionHeader";
+import SkeletonCard from "../components/SkeletonCard";
 
 const categories = ["All", "UI Kit", "Template", "Tool"];
 
 function CatalogPage() {
   const { products } = useProducts();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -23,59 +33,55 @@ function CatalogPage() {
   }, [products, searchTerm, selectedCategory]);
 
   return (
-    <div>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold">Catalog</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            Browse developer-focused digital products
-          </p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <SectionHeader title="Catalog" description="Browse our marketplace" />
+
+        <div className="mb-6 space-y-4">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-white placeholder-slate-500"
+          />
+
+          <div className="flex gap-2">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`rounded-lg px-4 py-2 font-medium transition ${
+                  selectedCategory === category
+                    ? "bg-blue-600 text-white"
+                    : "border border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-600"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={searchTerm}
-          onChange={(event) => setSearchTerm(event.target.value)}
-          className="w-full rounded-lg border border-slate-800 bg-slate-900 px-4 py-2 text-sm text-white outline-none placeholder:text-slate-500 sm:max-w-xs"
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {isLoading ? (
+            <>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </>
+          ) : filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <ProductCard key={product.id} {...product} />
+            ))
+          ) : (
+            <EmptyState
+              title="No Products Found"
+              description="Try adjusting your filters"
+            />
+          )}
+        </div>
       </div>
-
-      <div className="mt-6 flex flex-wrap gap-3">
-        {categories.map((category) => {
-          const isActive = selectedCategory === category;
-
-          return (
-            <button
-              key={category}
-              type="button"
-              onClick={() => setSelectedCategory(category)}
-              className={`rounded-full px-4 py-2 text-sm transition ${
-                isActive
-                  ? "bg-white text-slate-950"
-                  : "border border-slate-800 bg-slate-900 text-slate-300 hover:border-slate-700"
-              }`}
-            >
-              {category}
-            </button>
-          );
-        })}
-      </div>
-
-      {filteredProducts.length > 0 ? (
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} {...product} />
-          ))}
-        </div>
-      ) : (
-        <div className="mt-10 rounded-xl border border-dashed border-slate-800 bg-slate-900 p-8 text-center">
-          <h3 className="text-lg font-semibold">No products found</h3>
-          <p className="mt-2 text-sm text-slate-400">
-            Try a different search term or category.
-          </p>
-        </div>
-      )}
     </div>
   );
 }

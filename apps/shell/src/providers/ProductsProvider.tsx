@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { initialProducts } from "../data/initialProducts";
 import type { Product } from "../types/product";
 
@@ -12,7 +12,7 @@ type CreateProductInput = {
 type ProductsContextValue = {
   products: Product[];
   addProduct: (product: CreateProductInput) => void;
-  updateProduct: (id: string, product: CreateProductInput) => void;
+  updateProduct: (id: string, data: CreateProductInput) => void;
   deleteProduct: (id: string) => void;
 };
 
@@ -20,18 +20,24 @@ const ProductsContext = createContext<ProductsContextValue | undefined>(
   undefined,
 );
 
-export function ProductsProvider({ children }: { children: React.ReactNode }) {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+const PRODUCTS_STORAGE_KEY = "modular-marketplace-products";
 
-  const updateProduct = (id: string, product: CreateProductInput) => {
-    setProducts((currentProducts) =>
-      currentProducts.map((currentProduct) =>
-        currentProduct.id === id
-          ? { ...currentProduct, ...product }
-          : currentProduct,
-      ),
-    );
-  };
+export function ProductsProvider({ children }: { children: React.ReactNode }) {
+  const [products, setProducts] = useState<Product[]>(() => {
+    const storedProducts = localStorage.getItem(PRODUCTS_STORAGE_KEY);
+
+    if (!storedProducts) return initialProducts;
+
+    try {
+      return JSON.parse(storedProducts);
+    } catch {
+      return initialProducts;
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
+  }, [products]);
 
   const addProduct = (product: CreateProductInput) => {
     const newProduct: Product = {
@@ -40,6 +46,14 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     };
 
     setProducts((currentProducts) => [newProduct, ...currentProducts]);
+  };
+
+  const updateProduct = (id: string, updatedData: CreateProductInput) => {
+    setProducts((currentProducts) =>
+      currentProducts.map((product) =>
+        product.id === id ? { ...product, ...updatedData } : product,
+      ),
+    );
   };
 
   const deleteProduct = (id: string) => {
