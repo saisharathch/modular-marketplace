@@ -29,7 +29,7 @@ function HomePage() {
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
               to="/catalog"
-              className="rounded-lg bg-white px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-slate-200"
+              className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
             >
               Browse Catalog
             </Link>

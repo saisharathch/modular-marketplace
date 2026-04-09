@@ -33,8 +33,8 @@ function CatalogPage() {
   }, [products, searchTerm, selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-slate-900">
+      <div className="mx-auto max-w-7xl px-4 py-8">
         <SectionHeader title="Catalog" description="Browse our marketplace" />
 
         <div className="mb-6 space-y-4">
@@ -53,8 +53,8 @@ function CatalogPage() {
                 onClick={() => setSelectedCategory(category)}
                 className={`rounded-lg px-4 py-2 font-medium transition ${
                   selectedCategory === category
-                    ? "bg-blue-600 text-white"
-                    : "border border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-600"
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "border border-slate-600 bg-slate-800 text-slate-300 hover:border-blue-500 hover:bg-slate-700"
                 }`}
               >
                 {category}

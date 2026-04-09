@@ -50,7 +50,7 @@ function CheckoutPage() {
 
           <button
             onClick={handleCheckout}
-            className="mt-6 w-full rounded-lg bg-white px-4 py-3 text-sm font-medium text-slate-950 hover:bg-slate-200"
+            className="mt-6 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700"
           >
             Place Order
           </button>

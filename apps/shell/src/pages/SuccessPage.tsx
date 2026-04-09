@@ -37,7 +37,7 @@ function SuccessPage() {
 
       <Link
         to="/catalog"
-        className="mt-8 inline-block rounded-lg bg-white px-5 py-3 text-sm font-medium text-slate-950 hover:bg-slate-200"
+        className="mt-8 inline-block rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700"
       >
         Continue Shopping
       </Link>

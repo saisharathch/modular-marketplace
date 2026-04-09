@@ -14,7 +14,7 @@ function NotFoundPage() {
       <div className="mt-8 flex justify-center gap-4">
         <Link
           to="/"
-          className="rounded-lg bg-white px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-slate-200"
+          className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700"
         >
           Go Home
         </Link>

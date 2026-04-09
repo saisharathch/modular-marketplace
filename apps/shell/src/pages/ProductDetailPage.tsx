@@ -66,7 +66,7 @@ function ProductDetailPage() {
                   productId: product.id,
                 })
               }
-              className="rounded-lg bg-white px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-slate-200"
+              className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
             >
               Add to Cart
             </button>
@@ -80,13 +80,8 @@ function ProductDetailPage() {
           </div>
 
           <div className="mt-10 rounded-xl border border-slate-800 bg-slate-900 p-6">
-            <h2 className="text-lg font-semibold">What’s included</h2>
-            <ul className="mt-4 space-y-2 text-sm text-slate-400">
-              <li>• Reusable assets and starter content</li>
-              <li>• Clean structure for fast customization</li>
-              <li>• Ready-to-use patterns for modern frontend apps</li>
-              <li>• Built for frontend productivity and scalability</li>
-            </ul>
+            <h2 className="text-lg font-semibold">About This Product</h2>
+            <p className="mt-4 text-sm text-slate-300">{product.description}</p>
           </div>
         </div>
       </div>
