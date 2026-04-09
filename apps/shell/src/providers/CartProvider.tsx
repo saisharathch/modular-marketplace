@@ -6,20 +6,19 @@ import React, {
   useState,
 } from "react";
 import type { CartItem } from "../types/cart";
+import { cartRepository } from "../features/cart/model/cartRepository";
+import { productRepository } from "../features/products/model/productRepository";
 
 type AddToCartInput = {
-  id: string;
-  title: string;
-  price: number;
-  category: string;
+  productId: string;
 };
 
 type CartContextValue = {
   items: CartItem[];
   addToCart: (product: AddToCartInput) => void;
-  increaseQty: (id: string) => void;
-  decreaseQty: (id: string) => void;
-  removeItem: (id: string) => void;
+  increaseQty: (productId: string) => void;
+  decreaseQty: (productId: string) => void;
+  removeItem: (productId: string) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -27,64 +26,61 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
-const CART_STORAGE_KEY = "modular-marketplace-cart";
-
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+  const [items, setItems] = useState<CartItem[]>(() => cartRepository.getAll());
 
-    if (!storedCart) return [];
-
-    try {
-      return JSON.parse(storedCart);
-    } catch {
-      return [];
-    }
-  });
+  const products = productRepository.getAll();
 
   useEffect(() => {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    cartRepository.save(items);
   }, [items]);
 
-  const addToCart = (product: AddToCartInput) => {
+  const addToCart = ({ productId }: AddToCartInput) => {
     setItems((currentItems) => {
-      const existingItem = currentItems.find((item) => item.id === product.id);
+      const existing = currentItems.find(
+        (item) => item.productId === productId,
+      );
 
-      if (existingItem) {
+      if (existing) {
         return currentItems.map((item) =>
-          item.id === product.id
+          item.productId === productId
             ? { ...item, quantity: item.quantity + 1 }
             : item,
         );
       }
 
-      return [...currentItems, { ...product, quantity: 1 }];
+      return [...currentItems, { productId, quantity: 1 }];
     });
   };
 
-  const increaseQty = (id: string) => {
-    setItems((currentItems) =>
-      currentItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
+  const increaseQty = (productId: string) => {
+    setItems((items) =>
+      items.map((item) =>
+        item.productId === productId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item,
       ),
     );
   };
 
-  const decreaseQty = (id: string) => {
-    setItems((currentItems) =>
-      currentItems
+  const decreaseQty = (productId: string) => {
+    setItems((items) =>
+      items
         .map((item) =>
-          item.id === id ? { ...item, quantity: item.quantity - 1 } : item,
+          item.productId === productId
+            ? { ...item, quantity: item.quantity - 1 }
+            : item,
         )
         .filter((item) => item.quantity > 0),
     );
   };
 
-  const removeItem = (id: string) => {
-    setItems((currentItems) => currentItems.filter((item) => item.id !== id));
+  const removeItem = (productId: string) => {
+    setItems((items) => items.filter((item) => item.productId !== productId));
   };
 
   const clearCart = () => {
+    cartRepository.clear();
     setItems([]);
   };
 
@@ -93,10 +89,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [items],
   );
 
-  const totalPrice = useMemo(
-    () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    [items],
-  );
+  const totalPrice = useMemo(() => {
+    return items.reduce((sum, item) => {
+      const product = products.find((p) => p.id === item.productId);
+      if (!product) return sum;
+      return sum + product.price * item.quantity;
+    }, 0);
+  }, [items]);
 
   const value = {
     items,

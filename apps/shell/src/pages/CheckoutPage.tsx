@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../providers/CartProvider";
+import { productRepository } from "../features/products/model/productRepository";
 
 function CheckoutPage() {
   const { items, totalPrice } = useCart();
   const navigate = useNavigate();
+  const products = productRepository.getAll();
 
   const handleCheckout = () => {
     if (items.length === 0) return;
@@ -20,17 +22,22 @@ function CheckoutPage() {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[2fr_1fr]">
         <div className="space-y-4">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="rounded-xl border border-slate-800 bg-slate-900 p-5"
-            >
-              <h3 className="font-semibold">{item.title}</h3>
-              <p className="mt-1 text-sm text-slate-400">
-                {item.quantity} × ${item.price}
-              </p>
-            </div>
-          ))}
+          {items.map((item) => {
+            const product = products.find((p) => p.id === item.productId);
+            if (!product) return null;
+
+            return (
+              <div
+                key={item.productId}
+                className="rounded-xl border border-slate-800 bg-slate-900 p-5"
+              >
+                <h3 className="font-semibold">{product.title}</h3>
+                <p className="mt-1 text-sm text-slate-400">
+                  {item.quantity} × ${product.price}
+                </p>
+              </div>
+            );
+          })}
         </div>
 
         <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">

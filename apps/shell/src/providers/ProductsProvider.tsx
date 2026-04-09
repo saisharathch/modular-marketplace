@@ -1,18 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { initialProducts } from "../data/initialProducts";
 import type { Product } from "../types/product";
-
-type CreateProductInput = {
-  title: string;
-  price: number;
-  category: string;
-  description: string;
-};
+import { productRepository } from "../features/products/model/productRepository";
+import type {
+  CreateProductInput,
+  UpdateProductInput,
+} from "../features/products/model/productRepository";
 
 type ProductsContextValue = {
   products: Product[];
   addProduct: (product: CreateProductInput) => void;
-  updateProduct: (id: string, data: CreateProductInput) => void;
+  updateProduct: (id: string, data: UpdateProductInput) => void;
   deleteProduct: (id: string) => void;
 };
 
@@ -20,46 +17,27 @@ const ProductsContext = createContext<ProductsContextValue | undefined>(
   undefined,
 );
 
-const PRODUCTS_STORAGE_KEY = "modular-marketplace-products";
-
 export function ProductsProvider({ children }: { children: React.ReactNode }) {
-  const [products, setProducts] = useState<Product[]>(() => {
-    const storedProducts = localStorage.getItem(PRODUCTS_STORAGE_KEY);
-
-    if (!storedProducts) return initialProducts;
-
-    try {
-      return JSON.parse(storedProducts);
-    } catch {
-      return initialProducts;
-    }
-  });
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
-  }, [products]);
+    const allProducts = productRepository.getAll();
+    setProducts(allProducts);
+  }, []);
 
-  const addProduct = (product: CreateProductInput) => {
-    const newProduct: Product = {
-      id: crypto.randomUUID(),
-      ...product,
-    };
-
-    setProducts((currentProducts) => [newProduct, ...currentProducts]);
+  const addProduct = (input: CreateProductInput) => {
+    const updated = productRepository.create(input);
+    setProducts(updated);
   };
 
-  const updateProduct = (id: string, updatedData: CreateProductInput) => {
-    setProducts((currentProducts) =>
-      currentProducts.map((product) =>
-        product.id === id ? { ...product, ...updatedData } : product,
-      ),
-    );
+  const updateProduct = (id: string, input: UpdateProductInput) => {
+    const updated = productRepository.update(id, input);
+    setProducts(updated);
   };
 
   const deleteProduct = (id: string) => {
-    setProducts((currentProducts) =>
-      currentProducts.filter((product) => product.id !== id),
-    );
+    const updated = productRepository.remove(id);
+    setProducts(updated);
   };
 
   return (

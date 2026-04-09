@@ -63,10 +63,7 @@ function ProductDetailPage() {
             <button
               onClick={() =>
                 addToCart({
-                  id: product.id,
-                  title: product.title,
-                  price: product.price,
-                  category: product.category,
+                  productId: product.id,
                 })
               }
               className="rounded-lg bg-white px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-slate-200"
