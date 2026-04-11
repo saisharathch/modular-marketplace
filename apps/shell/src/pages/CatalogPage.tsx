@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { useProducts } from "../providers/ProductsProvider";
 import EmptyState from "../components/EmptyState";
-import SectionHeader from "../components/SectionHeader";
 import SkeletonCard from "../components/SkeletonCard";
+import { PageHeader, Input, Button, Card, CardContent } from "../components/ui";
 
 const categories = ["All", "UI Kit", "Template", "Tool"];
 
@@ -34,36 +34,46 @@ function CatalogPage() {
 
   return (
     <div className="min-h-screen bg-slate-900">
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <SectionHeader title="Catalog" description="Browse our marketplace" />
+      <div className="mx-auto max-w-7xl space-y-8 px-4 py-8">
+        <PageHeader
+          title="Catalog"
+          description="Explore premium frontend tools, templates, and UI systems"
+        />
 
-        <div className="mb-6 space-y-4">
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-white placeholder-slate-500"
-          />
+        <Card>
+          <CardContent className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
 
-          <div className="flex gap-2">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`rounded-lg px-4 py-2 font-medium transition ${
-                  selectedCategory === category
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "border border-slate-600 bg-slate-800 text-slate-300 hover:border-blue-500 hover:bg-slate-700"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  variant={
+                    selectedCategory === category ? "primary" : "secondary"
+                  }
+                  size="sm"
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category}
+                </Button>
+              ))}
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProducts.length > 0 && (
+              <p className="text-sm text-slate-400">
+                Found {filteredProducts.length} product
+                {filteredProducts.length !== 1 ? "s" : ""}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
             <>
               {Array.from({ length: 6 }).map((_, i) => (
@@ -75,10 +85,12 @@ function CatalogPage() {
               <ProductCard key={product.id} {...product} />
             ))
           ) : (
-            <EmptyState
-              title="No Products Found"
-              description="Try adjusting your filters"
-            />
+            <div className="col-span-full">
+              <EmptyState
+                title="No Products Found"
+                description="Try adjusting your search or filters"
+              />
+            </div>
           )}
         </div>
       </div>
