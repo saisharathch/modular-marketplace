@@ -15,9 +15,7 @@ interface DataTableProps<T> {
 }
 
 export function DataTable<T>({ columns, rows, emptyState }: DataTableProps<T>) {
-  if (rows.length === 0) {
-    return <>{emptyState}</>;
-  }
+  if (rows.length === 0) return <>{emptyState}</>;
 
   return (
     <Card>

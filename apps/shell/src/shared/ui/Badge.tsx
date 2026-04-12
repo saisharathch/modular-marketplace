@@ -1,28 +1,32 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "../lib/cn";
+import type { HTMLAttributes } from "react";
+import { cn } from "@/shared/lib/cn";
 
-interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
+type BadgeVariant = "default" | "success" | "warning" | "danger";
+
+interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+  variant?: BadgeVariant;
 }
 
-export function Card({ children, className, ...props }: CardProps) {
+const badgeVariants: Record<BadgeVariant, string> = {
+  default: "bg-slate-800 text-slate-200 border border-slate-700",
+  success: "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20",
+  warning: "bg-amber-500/10 text-amber-300 border border-amber-500/20",
+  danger: "bg-red-500/10 text-red-300 border border-red-500/20",
+};
+
+export function Badge({
+  className,
+  variant = "default",
+  ...props
+}: BadgeProps) {
   return (
-    <div
+    <span
       className={cn(
-        "rounded-2xl border border-slate-800 bg-slate-900 shadow-lg shadow-black/20",
+        "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
+        badgeVariants[variant],
         className,
       )}
       {...props}
-    >
-      {children}
-    </div>
-  );
-}
-
-export function CardContent({ children, className, ...props }: CardProps) {
-  return (
-    <div className={cn("p-6", className)} {...props}>
-      {children}
-    </div>
+    />
   );
 }

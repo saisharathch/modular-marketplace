@@ -1,5 +1,5 @@
-import { Card, CardContent } from "../../../components/ui";
-import { formatCurrency } from "../../../shared/lib/formatCurrency";
+import { formatCurrency } from "@/shared/lib/formatCurrency";
+import { Card, CardContent } from "@/shared/ui";
 
 interface AdminStatsGridProps {
   totalProducts: number;
@@ -36,9 +36,7 @@ export function AdminStatsGrid({
         <Card key={stat.label}>
           <CardContent className="space-y-2">
             <p className="text-sm text-slate-400">{stat.label}</p>
-            <p className="text-3xl font-semibold tracking-tight text-white">
-              {stat.value}
-            </p>
+            <p className="text-3xl font-semibold text-white">{stat.value}</p>
             <p className="text-xs text-slate-500">{stat.helper}</p>
           </CardContent>
         </Card>

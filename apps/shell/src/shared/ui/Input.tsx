@@ -1,52 +1,34 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "../lib/cn";
+import type { InputHTMLAttributes } from "react";
+import { cn } from "@/shared/lib/cn";
 
-type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
-type ButtonSize = "sm" | "md" | "lg";
-
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  fullWidth?: boolean;
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
 }
 
-const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-white text-slate-950 hover:bg-slate-200 border border-white/90",
-  secondary:
-    "bg-slate-900 text-white hover:bg-slate-800 border border-slate-700",
-  ghost:
-    "bg-transparent text-slate-200 hover:bg-slate-800 border border-transparent",
-  danger:
-    "bg-red-500/10 text-red-300 hover:bg-red-500/20 border border-red-500/30",
-};
+export function Input({ label, error, className, id, ...props }: InputProps) {
+  const inputId = id ?? props.name;
 
-const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-9 px-3 text-sm",
-  md: "h-10 px-4 text-sm",
-  lg: "h-11 px-5 text-base",
-};
-
-export function Button({
-  children,
-  className,
-  variant = "primary",
-  size = "md",
-  fullWidth = false,
-  ...props
-}: ButtonProps) {
   return (
-    <button
-      className={cn(
-        "inline-flex items-center justify-center rounded-xl font-medium transition focus:outline-none focus:ring-2 focus:ring-white/40 disabled:cursor-not-allowed disabled:opacity-60",
-        variantClasses[variant],
-        sizeClasses[size],
-        fullWidth && "w-full",
-        className,
+    <div className="space-y-2">
+      {label && (
+        <label
+          htmlFor={inputId}
+          className="block text-sm font-medium text-slate-200"
+        >
+          {label}
+        </label>
       )}
-      {...props}
-    >
-      {children}
-    </button>
+      <input
+        id={inputId}
+        className={cn(
+          "w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-slate-500 focus:ring-2 focus:ring-white/10",
+          error && "border-red-500/50 focus:border-red-500",
+          className,
+        )}
+        {...props}
+      />
+      {error && <p className="text-sm text-red-400">{error}</p>}
+    </div>
   );
 }

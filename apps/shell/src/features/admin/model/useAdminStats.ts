@@ -1,12 +1,15 @@
 import { useMemo } from "react";
-import { useProducts } from "../../../providers/ProductsProvider";
+import { useProducts } from "@/providers/ProductsProvider";
 
 export function useAdminStats() {
   const { products } = useProducts();
 
   return useMemo(() => {
     const totalProducts = products.length;
-    const categories = new Set(products.map((product) => product.category));
+
+    const totalCategories = new Set(products.map((product) => product.category))
+      .size;
+
     const averagePrice =
       totalProducts === 0
         ? 0
@@ -15,8 +18,8 @@ export function useAdminStats() {
 
     return {
       totalProducts,
-      totalCategories: categories.size,
-      averagePrice: Math.round(averagePrice * 100) / 100,
+      totalCategories,
+      averagePrice,
     };
   }, [products]);
 }
